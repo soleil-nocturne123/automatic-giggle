@@ -16,10 +16,8 @@ import sys # Interact with interpreter
 from io import StringIO
 
     # Helpful dataset
-nltk.download('punkt')
-nltk.download('wordnet')
-
-flag = True
+#nltk.download('punkt')
+#nltk.download('wordnet')
 
 # TEACH HER SOME BASIC PHRASES
 talking = [
@@ -31,14 +29,9 @@ talking = [
     [
         r"My name is (.*)",
         ["Hi %l, how can I help you today?", "Hey %l, I'm Giggle Bot!",]
-    ],
-    # GOODBYE
-    [
-        r"quit|Bye|Good day!",
-        ["Bye~", "Have a good one!",]
     ]
 ]
-BYE = ("quit","Bye","Good day!",)
+BYE = ["quit","bye","good day!"]
 
 # SOME TOPICS TO TALK
 f = open(r'Topic/programming.txt', 'r', errors = 'ignore')
@@ -81,31 +74,34 @@ def chatting(user_response):
 
 # GIGGLE BOT
 def giggle():
+    global flag
     chat = Chat(talking, reflections)
-    user_input = quit
+    user_input = "quit"
     try:
             user_input = input(">")
     except EOFError:
             print(user_input)
+            flag = False
     if user_input:
-        user_input = user_input[:-1]
-        if chat.respond(user_input) != None:
+        if(user_input.lower() in BYE):
+            flag = False
+            print("Have a good one!")
+        elif (chat.respond(user_input) != None):
             print(chat.respond(user_input))
         else:
             user_response = user_input
             user_response=user_response.lower()
-            if(user_response in BYE):
-                flag = False
-                print("Have a good one!")
-            else:
-                print(chatting(user_response))
-                sent_tokens.remove(user_response)
+            print(chatting(user_response))
+            sent_tokens.remove(user_response)
+    return
 
 # GIGGLE ON-THE-STAGE
 if __name__ == "__main__":
     start = True
+    flag = True
     while(flag == True):
         if(start == True):
             print("Howdy! Aren't it a beautiful day today :D")
             start = False
         giggle()
+    sys.exit()
